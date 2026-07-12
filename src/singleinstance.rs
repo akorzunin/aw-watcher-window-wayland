@@ -2,7 +2,7 @@
 extern crate appdirs;
 extern crate file_lock;
 
-use file_lock::FileLock;
+use file_lock::{FileLock, FileOptions};
 use std::fs;
 use std::io;
 
@@ -23,7 +23,7 @@ pub fn get_client_lock(clientname: &str) -> Result<FileLock, String> {
 
     path.push(clientname);
 
-    match FileLock::lock(&path.to_str().unwrap(), false, true) {
+    match FileLock::lock(path.to_str().unwrap(), false, FileOptions::new().write(true).create(true)) {
         Ok(lockfile) => Ok(lockfile),
         Err(err) => Err(format!(
             "Failed to get lock for client '{}': {}",
